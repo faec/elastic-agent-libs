@@ -154,15 +154,14 @@ func (m M) CopyFieldsTo(to M, key string) error {
 // maps.
 func (m M) Clone() M {
 	if m == nil {
-		// special case: some Beats code requires we return non-nil even if
+		// Special case: some Beats code requires we return non-nil even if
 		// the input map is nil
 		return make(M, 0)
 	}
-	//result := make(M, len(m))
 	result := maps.Clone(m)
 
-	for k := range m {
-		if innerMap, ok := tryToMapStr(m[k]); ok {
+	for k, v := range m {
+		if innerMap, ok := tryToMapStr(v); ok {
 			result[k] = innerMap.Clone()
 		}
 	}
