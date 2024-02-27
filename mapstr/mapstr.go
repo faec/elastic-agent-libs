@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"os"
 	"sort"
 	"strings"
 
@@ -153,6 +154,10 @@ func (m M) CopyFieldsTo(to M, key string) error {
 // Clone returns a copy of the M. It recursively makes copies of inner
 // maps.
 func (m M) Clone() M {
+	if m == nil {
+		fmt.Printf("Asked to clone a nil map\n")
+		os.Exit(1)
+	}
 	//result := make(M, len(m))
 	result := maps.Clone(m)
 
@@ -162,6 +167,10 @@ func (m M) Clone() M {
 		} //else {
 		//	result[k] = m[k]
 		//}
+	}
+	if result == nil {
+		fmt.Printf("produced a nil map\n")
+		os.Exit(1)
 	}
 
 	return result
