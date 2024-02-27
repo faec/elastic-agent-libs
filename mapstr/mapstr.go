@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"io"
 	"maps"
-	"os"
 	"sort"
 	"strings"
 
@@ -155,8 +154,9 @@ func (m M) CopyFieldsTo(to M, key string) error {
 // maps.
 func (m M) Clone() M {
 	if m == nil {
-		fmt.Printf("Asked to clone a nil map\n")
-		os.Exit(1)
+		// special case: some Beats code requires we return non-nil even if
+		// the input map is nil
+		return make(M, 0)
 	}
 	//result := make(M, len(m))
 	result := maps.Clone(m)
@@ -164,13 +164,7 @@ func (m M) Clone() M {
 	for k := range m {
 		if innerMap, ok := tryToMapStr(m[k]); ok {
 			result[k] = innerMap.Clone()
-		} //else {
-		//	result[k] = m[k]
-		//}
-	}
-	if result == nil {
-		fmt.Printf("produced a nil map\n")
-		os.Exit(1)
+		}
 	}
 
 	return result
