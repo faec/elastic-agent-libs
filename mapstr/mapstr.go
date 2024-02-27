@@ -22,7 +22,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"sort"
 	"strings"
 
@@ -153,11 +152,14 @@ func (m M) CopyFieldsTo(to M, key string) error {
 // Clone returns a copy of the M. It recursively makes copies of inner
 // maps.
 func (m M) Clone() M {
-	result := maps.Clone(m)
+	result := make(M, len(m))
+	//result := maps.Clone(m)
 
 	for k := range m {
 		if innerMap, ok := tryToMapStr(m[k]); ok {
 			result[k] = innerMap.Clone()
+		} else {
+			result[k] = m[k]
 		}
 	}
 
@@ -265,10 +267,12 @@ func (m M) Format(f fmt.State, c rune) {
 // Flatten flattens the given M and returns a flat M.
 //
 // Example:
-//   "hello": M{"world": "test" }
+//
+//	"hello": M{"world": "test" }
 //
 // This is converted to:
-//   "hello.world": "test"
+//
+//	"hello.world": "test"
 //
 // This can be useful for testing or logging.
 func (m M) Flatten() M {
@@ -298,10 +302,12 @@ func flatten(prefix string, in, out M) M {
 // FlattenKeys flattens given MapStr keys and returns a containing array pointer
 //
 // Example:
-//   "hello": MapStr{"world": "test" }
+//
+//	"hello": MapStr{"world": "test" }
 //
 // This is converted to:
-//   ["hello.world"]
+//
+//	["hello.world"]
 func (m M) FlattenKeys() *[]string {
 	out := make([]string, 0)
 	flattenKeys("", m, &out)
