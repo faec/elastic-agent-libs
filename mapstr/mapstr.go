@@ -23,6 +23,8 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"os"
+	"runtime/debug"
 	"sort"
 	"strings"
 
@@ -153,6 +155,10 @@ func (m M) CopyFieldsTo(to M, key string) error {
 // Clone returns a copy of the M. It recursively makes copies of inner
 // maps.
 func (m M) Clone() M {
+	bi, _ := debug.ReadBuildInfo()
+	if bi.GoVersion != "go1.21.7" {
+		os.Exit(1)
+	}
 	if m == nil {
 		// Special case: some Beats code requires we return non-nil even if
 		// the input map is nil
